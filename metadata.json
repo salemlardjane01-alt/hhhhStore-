@@ -1,0 +1,6 @@
+{
+  "name": "الطاهرون للثوب الإسلامي",
+  "description": "متجر أزياء إسلامية راقية للرجال والأولاد في تاوقريت، الشلف - ثياب ملكية، أقمصة إماراتية، أطقم ختان وعطور أصيلة.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

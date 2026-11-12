@@ -1,0 +1,92 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        request.auth.token.email == 'salemlardjane01@gmail.com' ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    function isValidCodOrder(data) {
+      return data.orderNumber is string && data.orderNumber.size() <= 64 &&
+             data.customerName is string && data.customerName.size() >= 2 && data.customerName.size() <= 100 &&
+             data.phone is string && data.phone.size() >= 8 && data.phone.size() <= 25 &&
+             data.wilaya is string && data.wilaya.size() <= 60 &&
+             data.baladiya is string && data.baladiya.size() <= 60 &&
+             data.quantity is number && data.quantity >= 1 && data.quantity <= 50 &&
+             data.totalDZD is number && data.totalDZD >= 0 &&
+             data.status in ['new', 'confirmed', 'rejected', 'delivered', 'cancelled'];
+    }
+
+    function isValidProduct(data) {
+      return data.id is string && data.id.size() <= 128 &&
+             data.nameAr is string && data.nameAr.size() <= 200 &&
+             data.categoryId is string && data.categoryId.size() <= 64 &&
+             data.priceDZD is number && data.priceDZD > 0 &&
+             data.inStock is bool;
+    }
+
+    // 1. Products collection (Public read, Admin manage)
+    match /products/{productId} {
+      allow read: if true;
+      allow create, update: if isAdmin() && isValidProduct(incoming());
+      allow delete: if isAdmin();
+    }
+
+    // 2. Settings document (Public read, Admin manage)
+    match /settings/{settingId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    // 3. Customer Cash-on-Delivery Orders
+    match /orders/{orderId} {
+      // Anyone can submit an order with valid data
+      allow create: if isValidId(orderId) && isValidCodOrder(incoming());
+      // Only store admin can list, read, update status, or delete orders
+      allow get, list, delete: if isAdmin();
+      allow update: if isAdmin() && isValidCodOrder(incoming());
+    }
+
+    // 4. Partner Companies (Yalidine, ZR Express, Suppliers)
+    match /partners/{partnerId} {
+      allow read, write: if isAdmin();
+    }
+
+    // 5. Confirmation Staff Members
+    match /staff/{staffId} {
+      allow read, write: if isAdmin();
+    }
+
+    // 6. Admins collection
+    match /admins/{adminId} {
+      allow read, write: if isAdmin();
+    }
+  }
+}
+

@@ -1,0 +1,123 @@
+{
+  "entities": {
+    "Product": {
+      "title": "Product",
+      "description": "Store product with sizes, colors, pricing, and category",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "nameAr": { "type": "string" },
+        "categoryId": { "type": "string" },
+        "priceDZD": { "type": "number" },
+        "originalPriceDZD": { "type": "number" },
+        "descriptionAr": { "type": "string" },
+        "image": { "type": "string" },
+        "sizes": { "type": "array" },
+        "colors": { "type": "array" },
+        "inStock": { "type": "boolean" },
+        "featured": { "type": "boolean" },
+        "fabricAr": { "type": "string" },
+        "badge": { "type": "string" }
+      },
+      "required": ["id", "nameAr", "categoryId", "priceDZD", "image", "inStock"]
+    },
+    "StoreSettings": {
+      "title": "StoreSettings",
+      "description": "Store configuration, contact information and announcements",
+      "type": "object",
+      "properties": {
+        "storeName": { "type": "string" },
+        "headline": { "type": "string" },
+        "subheadline": { "type": "string" },
+        "whatsappNumber": { "type": "string" },
+        "phoneNumber": { "type": "string" },
+        "city": { "type": "string" },
+        "wilaya": { "type": "string" },
+        "wilayaNumber": { "type": "string" },
+        "address": { "type": "string" },
+        "instagramUrl": { "type": "string" },
+        "facebookUrl": { "type": "string" },
+        "tiktokUrl": { "type": "string" },
+        "announcementText": { "type": "string" },
+        "isAnnouncementActive": { "type": "boolean" }
+      },
+      "required": ["storeName", "whatsappNumber", "city", "wilaya"]
+    },
+    "CodOrder": {
+      "title": "CodOrder",
+      "description": "Cash on delivery customer order",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "orderNumber": { "type": "string" },
+        "customerName": { "type": "string" },
+        "phone": { "type": "string" },
+        "wilaya": { "type": "string" },
+        "baladiya": { "type": "string" },
+        "deliveryType": { "type": "string" },
+        "selectedSize": { "type": "string" },
+        "selectedColor": { "type": "string" },
+        "quantity": { "type": "number" },
+        "subtotalDZD": { "type": "number" },
+        "shippingDZD": { "type": "number" },
+        "totalDZD": { "type": "number" },
+        "createdAt": { "type": "string" },
+        "status": { "type": "string" },
+        "confirmedByStaffName": { "type": "string" },
+        "customerLastName": { "type": "string" },
+        "deliveryAddress": { "type": "string" }
+      },
+      "required": ["orderNumber", "customerName", "phone", "wilaya", "baladiya", "quantity", "totalDZD"]
+    },
+    "PartnerCompany": {
+      "title": "PartnerCompany",
+      "description": "Logistics and supplier companies worked with",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "type": { "type": "string" },
+        "phone": { "type": "string" },
+        "address": { "type": "string" },
+        "notes": { "type": "string" }
+      },
+      "required": ["id", "name", "phone"]
+    },
+    "ConfirmationStaff": {
+      "title": "ConfirmationStaff",
+      "description": "Employees who confirm orders by phone",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "phone": { "type": "string" },
+        "role": { "type": "string" },
+        "active": { "type": "boolean" }
+      },
+      "required": ["id", "name", "phone", "active"]
+    }
+  },
+  "firestore": {
+    "/products/{productId}": {
+      "schema": { "$ref": "#/entities/Product" },
+      "description": "Public catalog of islamic thobes and accessories"
+    },
+    "/settings/store": {
+      "schema": { "$ref": "#/entities/StoreSettings" },
+      "description": "Store contact details and metadata"
+    },
+    "/orders/{orderId}": {
+      "schema": { "$ref": "#/entities/CodOrder" },
+      "description": "Customer cash-on-delivery orders submitted via landing page"
+    },
+    "/partners/{partnerId}": {
+      "schema": { "$ref": "#/entities/PartnerCompany" },
+      "description": "Delivery companies and wholesale suppliers"
+    },
+    "/staff/{staffId}": {
+      "schema": { "$ref": "#/entities/ConfirmationStaff" },
+      "description": "Staff members confirming orders"
+    }
+  }
+}
